@@ -1,23 +1,24 @@
-version: '3.8'
-
 services:
-  web:
-    image: app-name:latest
+  # laravel application service
+  laravel:
+    container_name: laravel-app
+    image: laravel-app:1
     build:
-      target: web
       context: .
-    env_file:
-      - .env
+      dockerfile: docker/be/Dockerfile
     ports:
       - "8000:80"
+    command: ["sh","entrypoint.sh"]
     volumes:
       - .:/var/www/html
+    networks:
+      - laravel_network
     depends_on:
-      - db
+      - database-service
   
-  db:
-    platform: "linux/amd64"
-    image: mysql:5.7
+  # Database service
+  database-service:
+    image: mysql:8.4.0
     env_file:
       - .env
     environment:
@@ -28,7 +29,11 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - dbdata:/var/lib/mysql
+      - database-volume:/var/lib/mysql
 
 volumes:
-  dbdata:
+  database-volume:
+
+networks:
+  laravel_network:
+    driver: bridge
