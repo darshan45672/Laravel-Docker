@@ -1,4 +1,5 @@
 FROM php:8.2.0-apache
+
 WORKDIR /var/www/html
 
 # Mod Rewrite
